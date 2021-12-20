@@ -9,8 +9,11 @@ class TestLangSwitcherInHeader(BaseTest):
 
         """--------- Test lang_switcher in header ---------"""
         header_block = Header()
-        header = header_block.header
-        header_block.check_is_element_present(header)
 
-        lang_switcher = header_block.lang_switcher
-        header_block.click(lang_switcher)
+        header_block.click(header_block.ukr_localization_button)
+        url_on_ukr_localization = header_block.get_current_url()
+        assert "/ru/" not in url_on_ukr_localization
+
+        header_block.click(header_block.ru_localization_button)
+        url_on_ukr_localization = header_block.get_current_url()
+        assert "/ru/" in url_on_ukr_localization

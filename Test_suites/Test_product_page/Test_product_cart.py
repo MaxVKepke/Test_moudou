@@ -13,7 +13,7 @@ class TestProductCart(BaseTest):
         product_page = ProductPage()
 
         """Test breadcrumbs """
-        product_page.is_element_visible(product_page.breadcrumbs_desktop)
+        product_page.is_element_located(product_page.breadcrumbs_desktop)
         # product_page.click(product_page.children_goods)
 
         product_page.wait_until_url_changes_after_click(product_page.children_goods)
@@ -24,20 +24,20 @@ class TestProductCart(BaseTest):
         self.add_rout_in_url_and_go_to_url(rout_on_product_page)
 
         """ Test product cart"""
-        product_page.is_element_visible(product_page.image_product)
+        product_page.is_element_located(product_page.image_product)
         # product_page.is_element_visible(product_page.product_gallery)
-        product_page.is_element_visible(product_page.name_product)
-        product_page.is_element_visible(product_page.reviews_stars)
+        product_page.is_element_located(product_page.name_product)
+        product_page.is_element_located(product_page.reviews_stars)
         product_page.click(product_page.reviews)
-        product_page.is_element_visible(product_page.add_reviews_popup)
+        product_page.is_element_located(product_page.add_reviews_popup)
 
         close_reviews = product_page.close_reviews_button
-        product_page.is_element_visible(close_reviews)
+        product_page.is_element_located(close_reviews)
         product_page.click(close_reviews)
 
-        product_page.is_element_visible(product_page.product_article)
-        product_page.is_element_visible(product_page.character)
-        product_page.is_element_visible(product_page.some_product_attribute)
+        product_page.is_element_located(product_page.product_article)
+        product_page.is_element_located(product_page.character)
+        product_page.is_element_located(product_page.some_product_attribute)
         product_page.is_element_clickable(product_page.character)
         product_page.click(product_page.oll_character_button)
         product_page.is_element_visibility(product_page.oll_character)
@@ -45,21 +45,21 @@ class TestProductCart(BaseTest):
         product_page.scroll_page_into_element(product_page.breadcrumbs_desktop)
 
         """ Test price block """
-        product_page.is_element_visible(product_page.availability)
+        product_page.is_element_located(product_page.availability)
 
-        product_page.is_element_visible(product_page.old_price)
-        product_page.is_element_visible(product_page.discount)
-        product_page.is_element_visible(product_page.price_hot)
+        product_page.is_element_located(product_page.old_price)
+        product_page.is_element_located(product_page.discount)
+        product_page.is_element_located(product_page.price_hot)
 
         points = product_page.points
         product_page.is_element_visibility(points)
 
         product_page.click(points)
-        product_page.is_element_visible(product_page.point_details_popup)
+        product_page.is_element_located(product_page.point_details_popup)
 
         add_to_basket_button = product_page.add_to_basket_button
         product_page.click(add_to_basket_button)
-        product_page.check_is_element_invisible(product_page.add_to_basket_button)
+        product_page.is_element_invisible(product_page.add_to_basket_button)
         header_block = Header()
         value_in_basket_count = product_page.get_text(header_block.basket_counter)
         assert int(value_in_basket_count) == 1, \

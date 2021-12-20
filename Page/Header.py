@@ -4,11 +4,15 @@ from Page.BasePage import BasePage
 
 
 class Header(BasePage):
-    test_element = (By.CSS_SELECTOR, "div.FPdoLc input.RNmpXc")
+    promo_text_on_header = (By.CSS_SELECTOR, 'header.optimize-banner-p13n p')
 
     header = (By.CSS_SELECTOR, 'header.header')
 
-    lang_switcher = (By.CSS_SELECTOR, 'div.lang_switcher')
+    lang_switcher_locator_str = 'div.lang_switcher'
+    lang_switcher = (By.CSS_SELECTOR, lang_switcher_locator_str)
+    one_of_lang = (By.CSS_SELECTOR, f'{lang_switcher_locator_str} a[role="button"]')
+    ukr_localization_button = (By.CSS_SELECTOR, 'a#lang_uk')
+    ru_localization_button = (By.CSS_SELECTOR, 'a#lang_ru')
 
     header_links = (By.CSS_SELECTOR, 'div.header-links')
     payment_link = (By.CSS_SELECTOR, 'div.header-links a[href*="/info/payment"]')

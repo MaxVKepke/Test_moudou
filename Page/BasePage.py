@@ -12,17 +12,17 @@ class BasePage:
         self.driver = DriverWrapper.get_webdriver()
         self.wait = WebDriverWait(self.driver, self.wait_element_time)
 
-    def check_is_element_present(self, locator):
+    def is_element_located(self, locator):
         """
-        Searches the web element on the page (in dom), for given locator;
-        :param locator: css_selector, x_path, class_name and other options to search the web element
-        :return: True if web element will by found in dom-tree \
-        :return: False if web element will by not found in dom-tree;
+        Looks for element with given locator and check if this element is visible
+        :param locator:
+        :return: true if element visible or false if element invisible
         """
         try:
-            self.wait.until(EC.presence_of_element_located(locator))
+            self.wait.until(EC.visibility_of_element_located(locator))
             return True
-        except Exception:
+        except Exception as error:
+            print(f"I'm IS_ELEMENT_LOCATED: {error}e")
             return False
 
     def check_are_all_elements_present(self, locator, error_message="Element is missing"):
@@ -37,7 +37,7 @@ class BasePage:
             return element_list
 
         except Exception as error:
-            print(f'I am a CHECK_ARE_ALL_ELEMENTS_PRESENTS, can not find {error}')
+            print(f'I am a CHECK_ARE_ALL_ELEMENTS, can not find {error}')
             return False
 
     def click(self, locator):
@@ -51,7 +51,7 @@ class BasePage:
             web_element = self.wait.until(EC.presence_of_element_located(locator))
             web_element.click()
         else:
-            locator.clicl()
+            locator.click()
         return self
 
     def get_current_url(self):
@@ -62,19 +62,6 @@ class BasePage:
         url = self.driver.current_url
         # print(f'\n---------CURRENT URL-------------\n{url}')
         return url
-
-    def is_element_visible(self, locator):
-        """
-        Looks for element with given locator and check if this element is visible
-        :param locator:
-        :return: true if element visible or false if element invisible
-        """
-        try:
-            self.wait.until(EC.visibility_of_element_located(locator))
-            return True
-        except Exception as error:
-            print(f"I'm IS_ELEMENT_VISIBLE: {error}e")
-            return False
 
     def move_cursor_on_element(self, locator):
         """
@@ -103,8 +90,12 @@ class BasePage:
         :param locator: css_selector, x_path, class_name and other options to search the web element
         :return: text from element
         """
-        element = self.wait.until(EC.presence_of_element_located(locator))
-        text = element.text
+        if type(locator) is tuple:
+            element = self.wait.until(EC.presence_of_element_located(locator))
+            text = element.text
+        else:
+            text = locator.text
+
         return text
 
     def wait_until_url_changes_after_click(self, click_locator):
@@ -125,18 +116,30 @@ class BasePage:
         :param locator: css_selector, x_path, class_name and other options to search the web element
         :return: self
         """
-        self.wait.until(EC.element_to_be_clickable(locator))
-        return self
+        try:
+            self.wait.until(EC.element_to_be_clickable(locator))
+            return True
 
-    def is_element_visibility(self, location):
+        except Exception as error:
+            raise error
+
+    def is_element_visibility(self, locator):
         """
         Check visibility of element by given locator
-        :param location: css_selector, x_path, class_name and other options to search the web element
-        :return: self
+        :param locator: css_selector, x_path, class_name and other options to search the web element
+        :return: true or false if element invisible
         """
-        element = self.wait.until(EC.presence_of_element_located(location))
-        self.wait.until(EC.visibility_of(element))
-        return self
+        try:
+            if locator is tuple:
+                element = self.wait.until(EC.presence_of_element_located(locator))
+                self.wait.until(EC.visibility_of(element))
+                return True
+            else:
+                self.wait.until(EC.visibility_of(locator))
+                return True
+
+        except Exception as error:
+            return False
 
     def scroll_page_into_element(self, locator):
         """
@@ -148,13 +151,52 @@ class BasePage:
         self.driver.execute_script("return arguments[0].scrollIntoView();", element)
         return self
 
-    def check_is_element_invisible(self, element_locator):
+    def is_element_invisible(self, locator):
         """
         Check and wait the invisibility of the element by locator
-        :param element_locator: css_selector, xz-path or another path to the element
+        :param locator: css_selector, xz-path or another path to the element
         :return: self
         """
-        self.wait.until(EC.invisibility_of_element_located(element_locator))
+        try:
+            self.wait.until(EC.invisibility_of_element_located(locator))
+            return True
+
+        except Exception as error:
+            print(f'I am a IS_ELEMENT_INVISIBLE, {error}')
+            return False
+
+    def get_oll_element_by_locator(self, locator):
+        """
+        Searches for and waits for web-element by locator
+        :param locator: css_selector, xz-path or another path to the element
+        :return: web-element_list
+        """
+        element_list = self.wait.until(EC.presence_of_all_elements_located(locator))
+        return element_list
+
+    def get_web_element(self, locator):
+        """
+        Wait until
+        :param locator:
+        :return:
+        """
+
+    def return_on_privies_page(self):
+        """
+        Return on privies page
+        :return: self page
+        """
+        self.driver.execute_script("window.history.go(-1)")
         return self
 
+    def wait_until_url_cheng(self, changeable_url):
+        self.get_current_url()
+        self.wait.until(EC.url_changes(changeable_url))
 
+    def check_work_item_in_some_menu(self, scroll_element, click_element, expected_url: str):
+        self.scroll_page_into_element(scroll_element)
+        self.wait_until_url_changes_after_click(click_element)
+        current_url = self.get_current_url()
+        assert expected_url in current_url
+
+        return self
